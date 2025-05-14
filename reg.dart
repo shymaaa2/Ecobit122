@@ -199,7 +199,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             obscureText: true,
                             decoration: _greenBorderInput('Enter your password'),
                             validator: (value) {
-                              if (value == null || value.length < 8) {
+                              if (value == null || value.isEmpty) {
+                                return 'Password is required';
+                              }
+                              if (value.length < 8) {
                                 return 'Password must be at least 8 characters';
                               }
                               if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
@@ -215,13 +218,18 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: _confirmPasswordController,
                             obscureText: true,
                             decoration: _greenBorderInput('Confirm your password'),
-                            validator: (value) =>
-                            value != _passwordController.text
-                                ? 'Passwords do not match'
-                                : null,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Confirm Password is required';
+                              } else if (value != _passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 16),
 
+                          // Terms checkbox
                           Row(
                             children: [
                               Checkbox(
@@ -240,6 +248,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 10),
 
+                          // Sign Up button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -258,6 +267,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 16),
 
+                          // Navigate to login
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -295,4 +305,5 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
+
 
