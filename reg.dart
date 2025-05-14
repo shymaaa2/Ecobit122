@@ -92,7 +92,6 @@ class _RegisterPageState extends State<RegisterPage> {
           SafeArea(
             child: Column(
               children: [
-                // Top bar with back arrow and title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
@@ -113,7 +112,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ],
                   ),
                 ),
-
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -133,20 +131,26 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 30),
 
+                          // Username
                           TextFormField(
                             controller: _usernameController,
                             decoration: _greenBorderInput('Enter your username'),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Username is required';
+                              } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                                return 'Username must be letters and numbers only';
+                              } else if (RegExp(r'^\d+$').hasMatch(value)) {
+                                return 'Username cannot be numbers only';
                               } else if (value.length <= 5) {
-                                return 'Username must be more than 5 letters';
+                                return 'Username must be more than 5 characters';
                               }
                               return null;
                             },
                           ),
                           const SizedBox(height: 12),
 
+                          // Email
                           TextFormField(
                             controller: _emailController,
                             decoration: _greenBorderInput('Enter your Email'),
@@ -162,6 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
+                          // Birthday
                           GestureDetector(
                             onTap: _selectDate,
                             child: AbsorbPointer(
@@ -188,17 +193,24 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
+                          // Password
                           TextFormField(
                             controller: _passwordController,
                             obscureText: true,
                             decoration: _greenBorderInput('Enter your password'),
-                            validator: (value) =>
-                            value == null || value.length < 8
-                                ? 'Password must be at least 8 characters'
-                                : null,
+                            validator: (value) {
+                              if (value == null || value.length < 8) {
+                                return 'Password must be at least 8 characters';
+                              }
+                              if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                                return 'You should use a special character';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 12),
 
+                          // Confirm Password
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: true,
@@ -283,3 +295,4 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
+
