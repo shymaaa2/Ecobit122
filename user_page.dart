@@ -14,6 +14,27 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   int _currentIndex = 2;
 
+  String username = '';
+  String email = '';
+  String birthdate = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        email = user.email ?? '';
+        username = user.displayName ?? 'No Name';
+        birthdate = '';
+      });
+    }
+  }
+
   void _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     Navigator.pushAndRemoveUntil(
@@ -26,10 +47,8 @@ class _UserPageState extends State<UserPage> {
   void _onTabTapped(int index) {
     switch (index) {
       case 0:
-      // Navigate to Home
         break;
       case 1:
-      // Navigate to Favorite
         break;
       case 2:
         Navigator.push(
@@ -38,7 +57,6 @@ class _UserPageState extends State<UserPage> {
         );
         break;
       case 3:
-      // Navigate to Map
         break;
       case 4:
         Navigator.push(
@@ -50,6 +68,42 @@ class _UserPageState extends State<UserPage> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  Widget _displayBirthdate(String birthdate) {
+    if (birthdate.isEmpty || birthdate == 'Not set') {
+      return const Text(
+        '',
+        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.grey),
+      );
+    }
+
+    try {
+      final date = DateTime.parse(birthdate);
+      final formattedDate = "${date.day}/${date.month}/${date.year}";
+      return Text(
+        formattedDate,
+        style: const TextStyle(fontSize: 16),
+      );
+    } catch (e) {
+      return Text(
+        birthdate,
+        style: const TextStyle(fontSize: 16),
+      );
+    }
+  }
+
+  Widget _buildProfileRow(String title, [String? value, Widget? valueWidget]) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          valueWidget ?? Text(value ?? '', style: const TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -107,11 +161,11 @@ class _UserPageState extends State<UserPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: [
-                      _buildProfileRow("Username", ""),
+                      _buildProfileRow("Username", username),
                       const Divider(),
-                      _buildProfileRow("Email", ""),
+                      _buildProfileRow("Email", email),
                       const Divider(),
-                      _buildProfileRow("Birthdate", ""),
+                      _buildProfileRow("Birthdate", null, _displayBirthdate(birthdate)),
                     ],
                   ),
                 ),
@@ -167,18 +221,4 @@ class _UserPageState extends State<UserPage> {
       ),
     );
   }
-
-  Widget _buildProfileRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(fontSize: 16)),
-        ],
-      ),
-    );
-  }
 }
-
