@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -32,28 +33,47 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _register() async {
-    if (_formKey.currentState!.validate() && _termsAccepted) {
-      try {
-        setState(() => _loading = true);
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Successful')),
-        );
-        Navigator.pop(context);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $e')),
-        );
-      } finally {
-        setState(() => _loading = false);
-      }
-    } else if (!_termsAccepted) {
+    if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You must accept the terms and conditions')),
       );
+      return;
+    }
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _loading = true);
+    try {
+      UserCredential userCredential =
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      final user = userCredential.user!;
+      final uid = user.uid;
+
+      await user.updateDisplayName(_usernameController.text.trim());
+      await user.reload();
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'uid': uid,
+        'username': _usernameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'birthdate': _birthdayController.text.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+    } catch (_) {
+
+    } finally {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Successful')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+      setState(() => _loading = false);
     }
   }
 
@@ -131,7 +151,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 30),
 
-                          // Username
                           TextFormField(
                             controller: _usernameController,
                             decoration: _greenBorderInput('Enter your username'),
@@ -150,7 +169,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Email
                           TextFormField(
                             controller: _emailController,
                             decoration: _greenBorderInput('Enter your Email'),
@@ -166,7 +184,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Birthday
                           GestureDetector(
                             onTap: _selectDate,
                             child: AbsorbPointer(
@@ -193,7 +210,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Password
                           TextFormField(
                             controller: _passwordController,
                             obscureText: true,
@@ -213,7 +229,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Confirm Password
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: true,
@@ -229,7 +244,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 16),
 
-                          // Terms checkbox
                           Row(
                             children: [
                               Checkbox(
@@ -248,7 +262,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 10),
 
-                          // Sign Up button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -267,7 +280,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 16),
 
-                          // Navigate to login
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -277,7 +289,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const LoginPage()),
+                                      builder: (context) => const LoginPage(),
+                                    ),
                                   );
                                 },
                                 child: const Text(
@@ -305,5 +318,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-
-
