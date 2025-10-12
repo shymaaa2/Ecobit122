@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
-import 'user_page.dart';
+import 'themed_background.dart';
 
 class TakeShotPage extends StatefulWidget {
   const TakeShotPage({super.key});
@@ -22,13 +22,11 @@ class _TakeShotPageState extends State<TakeShotPage> {
   ];
 
   void _onTabTapped(int index) {
-    switch (index) {
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const SettingsPage()),
-        );
-        break;
+    if (index == 4) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const SettingsPage()),
+      );
     }
     setState(() {
       _currentIndex = index;
@@ -37,141 +35,107 @@ class _TakeShotPageState extends State<TakeShotPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/image.jpeg',
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          // Main Content
-          SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.person, color: Colors.black),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const UserPage()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Manage List",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Search Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.all(0),
-                      filled: true,
-                      fillColor: Colors.white70,
-                    ),
-                  ),
-                ),
-
-                // Scrollable List
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: Colors.green),
-                        ),
-                        child: ListTile(
-                          leading: Image.network(
-                            item['image']!,
-                            width: 50,
-                            height: 50,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-                          ),
-                          title: Text(item['name']!),
-                          subtitle: const Text("Status: Edible\nApril 20, 2025"),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(Icons.copy, size: 20),
-                              SizedBox(width: 8),
-                              Icon(Icons.delete, color: Colors.red, size: 24),
-                            ],
-                          ),
-                        ),
-                      );
+      body: ThemedBackground(
+        child: Column(
+          children: [
+            // Top bar
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.person, color: isDark ? Colors.white : Colors.black),
+                    onPressed: () {
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
 
-      // Bottom Navigation Bar
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFD2E3C8),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            type: BottomNavigationBarType.fixed,
-            currentIndex: _currentIndex,
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.black54,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
-            onTap: _onTabTapped,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorite'),
-              BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'Scan'),
-              BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-              BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-            ],
-          ),
+            // Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Manage List",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            ),
+
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: TextField(
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                  prefixIcon: Icon(Icons.search, color: isDark ? Colors.white : Colors.black),
+                  filled: true,
+                  fillColor: isDark ? Colors.black54 : Colors.white70,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                ),
+              ),
+            ),
+
+            // Scrollable List
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Card(
+                    color: isDark ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.85),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.green.shade600),
+                    ),
+                    child: ListTile(
+                      leading: Image.network(
+                        item['image']!,
+                        width: 50,
+                        height: 50,
+                        errorBuilder: (_, __, ___) => Icon(Icons.broken_image, color: isDark ? Colors.white : Colors.black),
+                      ),
+                      title: Text(
+                        item['name']!,
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      ),
+                      subtitle: Text(
+                        "Status: Edible\nApril 20, 2025",
+                        style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.copy, size: 20, color: isDark ? Colors.white : Colors.black),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.delete, color: Colors.redAccent, size: 24),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-
-
-
