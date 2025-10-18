@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'admin_page.dart';
+import 'admin_addLocation.dart';
 
 class AdminDashboardPage extends StatelessWidget {
   const AdminDashboardPage({super.key});
@@ -66,7 +67,7 @@ class AdminDashboardPage extends StatelessWidget {
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,
                     childAspectRatio: 1.1,
-                    children: const [
+                    children: [
                       _DashboardImageButton(
                         label: 'Login history',
                         imageUrl: 'https://cdn-icons-png.flaticon.com/512/987/987473.png',
@@ -82,6 +83,12 @@ class AdminDashboardPage extends StatelessWidget {
                       _DashboardImageButton(
                         label: 'Map',
                         imageUrl: 'https://cdn-icons-png.flaticon.com/512/1865/1865269.png',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AdminAddLocationPage()),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -89,16 +96,7 @@ class AdminDashboardPage extends StatelessWidget {
 
                 const Spacer(),
 
-                // Static Home Icon
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Column(
-                    children: [
-                      Icon(Icons.home, size: 30),
-                      Text("Home", style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
+
               ],
             ),
           ),
@@ -111,15 +109,15 @@ class AdminDashboardPage extends StatelessWidget {
 class _DashboardImageButton extends StatelessWidget {
   final String imageUrl;
   final String label;
+  final VoidCallback? onTap;
 
-  const _DashboardImageButton({required this.imageUrl, required this.label});
+
+  const _DashboardImageButton({required this.imageUrl, required this.label , this.onTap,});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Handle tap
-      },
+      onPressed: onTap,
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
