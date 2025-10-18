@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'classifier.dart';
 import 'package:camera/camera.dart';
 import 'camera.dart';
+import 'feedback.dart';
+import 'TakeShotPage.dart';
 
 // Page for getting an analysis by selecting a pre-existing image
 // This is using google's image picker
@@ -160,6 +162,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         child:
                           Column(
                             children: [
+
                             if (classification != null)
                               Container(
                               padding: const EdgeInsets.all(8),
@@ -172,9 +175,107 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               color: Colors.black
                               ),),
                               const Spacer(),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        contentPadding:
+                                        const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+
+                                            const SizedBox(height: 8),
+                                            Align(
+                                              alignment: Alignment.bottomCenter,
+                                              child:  SizedBox(
+                                                width: 100,
+                                                height: 100,
+                                                child: Image(image: AssetImage("assets/feedback.png")),
+                                              ),
+                                            ),
+                                            const Text(
+                                              'Your voice matters! ',
+                                              style: TextStyle(fontSize: 15, color: Colors.black87),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const Text('help us by filling a quick survey'),
+
+                                            const SizedBox(height: 25),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                // OK Button
+                                                OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                    side: const BorderSide(color: Colors.green, width: 1),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        vertical: 10, horizontal: 25),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context); // close popup
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => const FeedbackPage()),
+                                                    );
+                                                  },
+                                                  child: const Text(
+                                                    'OK',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+
+                                                // Maybe Later Button
+                                                OutlinedButton(
+                                                  style: OutlinedButton.styleFrom(
+                                                    side: const BorderSide(color: Colors.green, width: 1),
+                                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context); // close popup
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => const TakeShotPage()),
+                                                    );
+                                                  },
+                                                  child: const Text(
+                                                    'Maybe, later.',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.normal,
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+
                               ],
                             ),
                           )
+
                       ])
                 )],
               )
