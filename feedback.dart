@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'TakeShotPage.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -16,7 +17,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // صورة الخلفية تغطي كامل الشاشة
+          // Background image
           Positioned.fill(
             child: Image.asset(
               'assets/image.jpeg',
@@ -29,7 +30,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const SizedBox(height: 130),
 
                   const Text(
@@ -38,7 +38,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                         color: Colors.black,
                         fontSize: 23,
                         fontWeight: FontWeight.w800),
-
                   ),
                   const SizedBox(height: 20),
 
@@ -62,7 +61,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                   ),
                   const SizedBox(height: 15),
 
-
                   const Text(
                     "How easy was it to use the app to check a fruit's edibility?",
                     style: TextStyle(
@@ -82,6 +80,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     itemSize: 19,
                   ),
                   const SizedBox(height: 15),
+
                   const Text(
                     "How likely are you to recommend this app to a friend?",
                     style: TextStyle(
@@ -101,6 +100,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     itemSize: 19,
                   ),
                   const SizedBox(height: 15),
+
                   const Text(
                     "How clear was the information provided about the fruit?",
                     style: TextStyle(
@@ -121,25 +121,94 @@ class _FeedbackPageState extends State<FeedbackPage> {
                   ),
                   const SizedBox(height: 26),
 
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible:
+                        false, // Prevent closing by tapping outside
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child:
+                                    Image.asset("assets/thanks.gif"),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  ' Your feedback has been submitted',
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 25),
 
-                  TextButton(onPressed:()=>Navigator.pop(context),
-                    style: TextButton.styleFrom( backgroundColor: Colors.lightGreen, foregroundColor: Colors.black,
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    // OK Button
+                                    OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        side: const BorderSide(
+                                            color: Colors.green, width: 1),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 25),
+                                      ),
+
+                                      onPressed: () {
+                                        Navigator.pop(context); // close popup
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const TakeShotPage()),
+                                        );
+                                      },
+                                      child: const Text(
+                                        'OK',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.lightGreen,
+                      foregroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12), // زوايا مدورة
-                       ),
-                       ),
-                    child: const Text('Submit' ,style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold) ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
                   ),
 
                   const SizedBox(height: 30),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child:  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image(image: AssetImage("assets/heart.gif")),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset("assets/heart.gif"),
+                    ),
                   ),
-                ),
                 ],
               ),
             ),
@@ -149,4 +218,3 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 }
-
