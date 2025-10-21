@@ -68,6 +68,23 @@ class DatabaseService {
       );
     }
 
+     // Retrieving photos
+  static void getUserPhotos(Function(List<Photo>) photosCallback) {
+    FirebaseDatabase.instance.ref().child("Photos").onValue
+        .listen((photosDataSnapshot) {
+      if (photosDataSnapshot.snapshot.exists) {
+        List<Photo> photos = [];
+        for (var element in photosDataSnapshot.snapshot.children) {
+          PhotoData photoData = PhotoData.fromJson(element.value as Map);
+          Photo photo = Photo(key: element.key, photoData: photoData);
+          photos.add(photo);
+          }
+          photosCallback(photos);
+        }
+      }
+      );
+    }
+    
     // Retrieving users
     static void getUsers(Function(List<User>) usersCallback) {
       FirebaseDatabase.instance.ref().child("Users").onValue
@@ -100,7 +117,6 @@ class DatabaseService {
           }
         }
         );
-      }
-    
+      }  
 }
 

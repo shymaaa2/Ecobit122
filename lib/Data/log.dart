@@ -7,7 +7,7 @@ class Log {
 
 class LogData{
   String? email;
-  DateTime? logTime;
+  String? logTime;
 
   LogData({this.email, this.logTime});
 
