@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   List<Photo> photoList = [];
   String uid = '';
   String email = '';
-  DateTime logTime = DateTime.now();
+  String logTime = '';
 
   
   void _onTabTapped(int index) {
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         uid = user.uid;
         email = user.email ?? '';
-        logTime = DateTime.timestamp();
+        logTime.text = DateTime.now().toIso8601String().split("T")[0];
       });
     }
     
