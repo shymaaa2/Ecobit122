@@ -1,0 +1,181 @@
+{
+  "Logs": {
+    "-Oc1_E4JSaqu3M9uM6mi": {
+      "email": "nana@gmail.com",
+      "logTime": "2025-10-20T21:05:06.891911"
+    },
+    "-Oc1eE_RfMhp0qHwgFQd": {
+      "email": "nana@gmail.com",
+      "logTime": "2025-10-20T21:26:59.666470"
+    }
+  },
+  "Photos": {
+    "-OaovdxOjnRXV8Fu3ByB": {
+      "dateTaken": "2025-10-05",
+      "img": "Apple.jpeg",
+      "note": "apple",
+      "status": "Edible",
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    },
+    "-Oaow7inn73BlS-g062N": {
+      "dateTaken": "2025-10-05",
+      "img": "Apple.jpeg",
+      "note": "apple",
+      "status": "Edible",
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    },
+    "-OatVeNpD5rBIKTrGzjZ": {
+      "dateTaken": "2025-10-05",
+      "img": "Apple.jpeg",
+      "note": "apple",
+      "status": "Edible",
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    }
+  },
+  "Ratings": {
+    "-OaovdxOjnRXV8Fu3ByB": {
+      "q1": 1,
+      "q2": 2,
+      "q3": 3,
+      "q4": 3,
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    },
+    "-Oaow7inn73BlS-g062N": {
+      "q1": 2,
+      "q2": 2,
+      "q3": 2,
+      "q4": 4,
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    },
+    "-OatVeNpD5rBIKTrGzjZ": {
+      "q1": 2,
+      "q2": 3,
+      "q3": 4,
+      "q4": 4,
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    },
+    "-ObgHr2CLGjQoIyPZa5n": {
+      "q1": 4,
+      "q2": 3,
+      "q3": 5,
+      "q4": 5,
+      "uid": "YcN5YTFX5QW4UoplVvfFe1qEAxd2"
+    }
+  },
+  "Users": {
+    "-OaovdxOjnRXV8Fu3ByB": {
+      "dob": "2000-10-05",
+      "email": "naaa@gmail.com",
+      "pass": "Instance of 'Encrypted'",
+      "uname": "naaanaaa"
+    },
+    "-Oaow7inn73BlS-g062N": {
+      "dob": "2000-10-05",
+      "email": "maaa@gmail.com",
+      "pass": "Instance of 'Encrypted'",
+      "uname": "mmaaama"
+    },
+    "-OatVeNpD5rBIKTrGzjZ": {
+      "dob": "2003-10-06",
+      "email": "lolly@gmail.com",
+      "pass": "Instance of 'Encrypted'",
+      "uname": "lollyy"
+    },
+    "-OatbfoqbnDezCd_lse0": {
+      "dob": "2003-10-06",
+      "email": "aaaa@gmail.com",
+      "pass": "18UsMN1V2SOAdlWs0PBz4A==",
+      "uname": "aaaaaaaaa"
+    },
+    "-Oatj6qj8toVKPu9gRVE": {
+      "dob": "2000-10-06",
+      "email": "aaaaa@gmail.com",
+      "pass": "hOZA0+/y8WgeRk3Cw1qSZg==",
+      "uname": "aaaaa"
+    },
+    "-OatjX0oETp6WFibbL-_": {
+      "dob": "2003-10-06",
+      "email": "bbb@gmail.com",
+      "pass": "dOLbqkHlI9yn3ub0e5Ku3w==",
+      "uname": "bbbb"
+    },
+    "-Ob6rW39leYRvETGltEK": {
+      "dob": "2003-10-09",
+      "email": "mimi@gmail.com",
+      "pass": "vX8zaObblJpjSXONeqZpOw==",
+      "uname": "mimimi"
+    },
+    "-Ob6tFd9-XW_1Z0ZMPic": {
+      "dob": "2003-10-09",
+      "email": "mao@gmail.com",
+      "pass": "naZbXfMl+ocY0lYFrHumFA==",
+      "uname": "maomao"
+    },
+    "-Ob6uFbWGkyURY7zFr6K": {
+      "dob": "2005-10-09",
+      "email": "lily@gmail.com",
+      "pass": "TyyoHm2uO7emk1sVHhYcvA==",
+      "uname": "lily"
+    },
+    "-Ob6ux8Cu8E7Fc6pNXkB": {
+      "dob": "2003-10-09",
+      "email": "mini@gmail.com",
+      "pass": "/JO/Ia+H8XokQsl8OkVwKg==",
+      "uname": "mini"
+    },
+    "-Ob6xNWGLNnwyMk5h0hD": {
+      "dob": "2000-10-09",
+      "email": "max@gmail.com",
+      "pass": "ERelwUgg86NtCFJ3eK0H9w==",
+      "uname": "maxi"
+    },
+    "-ObD9gPLO0JIEgaVjtkF": {
+      "dob": "2000-10-10",
+      "email": "kiki@gmail.com",
+      "pass": "v6S8pE2iDgyk+VFqlJszTA==",
+      "uname": "kikiki"
+    },
+    "-ObDAQEzsph6X6A2lhYM": {
+      "dob": "2003-10-10",
+      "email": "lulu@gmail.com",
+      "pass": "5XR+CY9Xg1CIyuhDgInmJA==",
+      "uname": "lululu"
+    },
+    "-ObDD2ehuYFkmm5Eydzq": {
+      "dob": "2000-10-10",
+      "email": "poppy@gmail.com",
+      "pass": "kItgmA6jFtaZsKpbMKtpVw==",
+      "uname": "poppy"
+    },
+    "-ObDEZhiSdAX85yTCT6D": {
+      "dob": "2003-10-10",
+      "email": "poppers@gmail.com",
+      "pass": "n9JbyvgzY9WfpbQs/tNbzQ==",
+      "uname": "poppers"
+    },
+    "-ObDFQmWtAjopG3L5f6v": {
+      "dob": "2003-10-10",
+      "email": "kala@gmail.com",
+      "pass": "pyR90qXkVvbDFNZCSm8MWg==",
+      "uname": "kalalq"
+    },
+    "-ObIBhKyxIC7hCgSaXmv": {
+      "dob": "2000-10-11",
+      "email": "mara@gmail.com",
+      "pass": "Y//eV3MoSd9Uj9Ifz4xEMQ==",
+      "uname": "maramar"
+    },
+    "-ObU61cEYE7izqlQzfyq": {
+      "dob": "2000-10-13",
+      "email": "nana@gmail.com",
+      "pass": "saT8g4CyKF796+ml+3a+jw==",
+      "uname": "nana"
+    },
+    "-ObUVT0DVlSuggfXbMdc": {
+      "dob": "2002-10-14",
+      "email": "kam@gmail.com",
+      "pass": "4BZMfWyjG83TAEq/bNe/uQ==",
+      "uname": "kaaaa"
+    }
+  }
+}
