@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         uid = user.uid;
         email = user.email ?? '';
-        logTime.text = DateTime.now().toIso8601String().split("T")[0];
+        logTime = DateTime.now().toIso8601String().split("T")[0];
       });
     }
     
