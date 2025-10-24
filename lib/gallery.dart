@@ -65,7 +65,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
       int age = calculateHours(shootingDate!);
       if(age >= 1) {
         // Check if Image was taken over 24 hours ago
-        // maybe remove this check??
         setState(() {
           errMsg = 'Select an image that was taken less than 24 hours ago';
         });
