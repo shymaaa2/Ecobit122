@@ -44,7 +44,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     if (cameraIsAvailable) {
       // get list of available cameras
       cameraDescription = (await availableCameras()).first;
-      _widgets!.add(CameraScreen(camera: cameraDescription));
+      _widgets?.add(CameraScreen(camera: cameraDescription));
     }
   }
 
@@ -59,25 +59,102 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // I think...
   Future<void> processImage() async {
 
-    if(imagePath != null) {
-      exif = await Exif.fromPath(imagePath!);
-      shootingDate = await exif!.getOriginalDate();
-      int age = calculateHours(shootingDate!);
+      exif = await Exif.fromPath(imagePath ?? '');
+      shootingDate = await exif?.getOriginalDate();
+      int age = calculateHours(shootingDate ?? DateTime.now().subtract(const Duration(days: -1)));
+      print(age);
       if(age >= 1) {
         // Check if Image was taken over 24 hours ago
+        // maybe remove this check??
         setState(() {
           errMsg = 'Select an image that was taken less than 24 hours ago';
         });
         print(errMsg);
+
+        _showCustomDialog(
+          message: 'This image was taken more than 24 hours ago!',
+          color: Colors.red,
+          icon: Icons.error_outline,
+        );
       }
       else{
         final imageBytes = File(imagePath!).readAsBytesSync();
         image = img.decodeImage(imageBytes);
         imageAnalysis();
+
+        _showCustomDialog(
+          message: 'Your photo has been successfully processed',
+          color: Colors.green,
+          icon: Icons.check_circle,
+        );
       }
-    }
+    
 
   }
+  void _showCustomDialog({
+    required String message,
+    required Color color,
+    required IconData icon,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: color, width: 2),
+        ),
+        backgroundColor: Colors.white,
+        contentPadding: const EdgeInsets.all(20),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Icon(icon, color: color, size: 50),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: color, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   Future<void> imageAnalysis() async{
 
