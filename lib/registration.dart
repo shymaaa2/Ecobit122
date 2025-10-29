@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'Data/Database.dart';
 import 'login.dart';
 import 'encryption.dart';
-
+import 'package:encrypt/encrypt.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,6 +24,12 @@ class _RegisterPageState extends State<RegisterPage> {
   String errMsg = '';
 
   final Encryption encryption = Encryption();
+  
+  
+  //Removal of malicious input
+  String sanitizeInput(String input) {
+    return input.replaceAll(RegExp(r'[<>{};$]'), '').trim();
+  }
 
   Future<void> _selectDate() async {
     final pickedDate = await showDatePicker(
@@ -62,12 +68,19 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) return;
       setState(() => _loading = true);
       // Password Encryption
-      final password = encryption.encrypted(_passwordController.text.trim());
+      final password = sanitizeInput(_passwordController.text);
+      Encrypted cryptPassword = encryption.encrypted(password.trim());
+
+      final email = sanitizeInput(_emailController.text);
+      
+      final confirmPassword = sanitizeInput(_confirmPasswordController.text);
+      final username = sanitizeInput(_usernameController.text);
+      final birthday = sanitizeInput(_birthdayController.text);
 
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
+          email: email.trim(),
           password: _passwordController.text.trim(),
         );
 
@@ -77,10 +90,10 @@ class _RegisterPageState extends State<RegisterPage> {
         await user.reload();
 
         await DatabaseService().addUser({
-          'email': _emailController.text.trim(),
-          'uname': _usernameController.text.trim(),
-          'pass':  password.base64,
-          'dob': _birthdayController.text.trim(),
+          'email': email.trim(),
+          'uname': username.trim(),
+          'pass':  cryptPassword.base64,
+          'dob': birthday.trim(),
         });
 
         ScaffoldMessenger.of(context).showSnackBar(

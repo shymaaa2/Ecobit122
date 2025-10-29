@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'admin_dashboard_page.dart';
 import 'registration.dart'; 
+import 'admin_reports_page.dart';
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -38,7 +38,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         if (userCredential.user != null) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const AdminDashboardPage()),
+            MaterialPageRoute(builder: (context) => const AdminReportsPage()),
           );
         }
       } on FirebaseAuthException catch (e) {

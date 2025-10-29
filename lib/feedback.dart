@@ -3,6 +3,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Data/Database.dart';
 import 'home.dart';
+import 'dart:async';
+import 'package:eco/feedback_validators.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -20,11 +22,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
   String uid = '';
 
   Future<void> saveRating() async{
+    FeedbackValidators.validateRating({
+          'q1': q1,
+          'q2': q2,
+          'q3': q3,
+          'q4': q4,
+          'dateTaken': DateTime.now().toIso8601String(),
+          'uid': uid
+    });
+
     await DatabaseService().addRating({
           'q1': q1,
           'q2': q2,
           'q3': q3,
           'q4': q4,
+          'dateTaken': DateTime.now().toIso8601String(),
           'uid': uid
         });
 
@@ -33,7 +45,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     MaterialPageRoute(
                       builder: (context) => 
                       const HomePage())
-                      ,);
+                      );
   }
 
    Future<void> _loadUserData() async{
@@ -69,9 +81,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const SizedBox(height: 130),
-
                   const Text(
                     "         Tell Us What You Think!",
                     style: TextStyle(
@@ -101,8 +111,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     itemSize: 19,
                   ),
                   const SizedBox(height: 15),
-
-
                   const Text(
                     "How easy was it to use the app to check a fruit's edibility?",
                     style: TextStyle(
@@ -160,10 +168,58 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     itemSize: 19,
                   ),
                   const SizedBox(height: 26),
-
-
-                  TextButton(onPressed:()=>
-                  saveRating(),
+                  TextButton(onPressed:()=>{
+                  if (q1 == 0 || q2 == 0 || q3 == 0 || q4 == 0){
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              ),
+                          backgroundColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                          content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                              const SizedBox(height: 8),
+                              const Text(
+                                    'Please fill in all the fields ',
+                                      style: TextStyle(fontSize: 15, color: Colors.black87),
+                                      textAlign: TextAlign.center,
+                                      ),
+                                const SizedBox(height: 25),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                  // OK Button
+                                  OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                        side: const BorderSide(color: Colors.green, width: 1),
+                                        padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 25),
+                                      ),
+                                      onPressed: () {
+                                          Navigator.pop(context); // close popup
+                                      },
+                                      child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        )
+                  }
+                  else{
+                    saveRating()
+                  }
+                  },
                     style: TextButton.styleFrom( backgroundColor: Colors.lightGreen, foregroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12), // زوايا مدورة
@@ -171,8 +227,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                        ),
                     child: const Text('Submit' ,style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold) ),
                   ),
-
-                  const SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child:  SizedBox(
@@ -190,4 +245,3 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 }
-

@@ -1,9 +1,11 @@
 import 'package:eco/gallery.dart';
+import 'package:eco/map_picker_page.dart';
 import 'package:flutter/material.dart';
 import 'Data/Database.dart';
 import 'Data/photo.dart';
 import 'themed_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,17 +43,20 @@ class _HomePageState extends State<HomePage> {
         );
         break;
       case 3:
-      // Navigate to Map
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MapPickerPage()),
+        );
         break;
-      //case 4:
-        //Navigator.push(
-          //context,
-          //MaterialPageRoute(builder: (_) => const SettingsPage()),
-        //);
-        //break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsPage()),
+        );
+        break;
     }
     setState(() {
-      _currentIndex = index;
+      _currentIndex = index; 
     });
   }
 
@@ -61,7 +66,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         uid = user.uid;
         email = user.email ?? '';
-        logTime = DateTime.now().toIso8601String().split("T")[0];
+        logTime = DateTime.now().toIso8601String();
       });
     }
     
@@ -157,8 +162,7 @@ class _HomePageState extends State<HomePage> {
                       side: BorderSide(color: Colors.green.shade600),
                     ),
                     child: ListTile(
-                      leading: Image.asset(
-                        photo.photoData!.img!,
+                      leading: Image.asset("assets/${photo.photoData!.img!}",
                         width: 50,
                         height: 50,
                         errorBuilder: (_, __, ___) => Icon(Icons.broken_image, color: isDark ? Colors.white : Colors.black),

@@ -8,6 +8,7 @@ import 'camera.dart';
 import 'home.dart';
 import 'feedback.dart';
 import 'package:native_exif/native_exif.dart';
+import 'settings_page.dart';
 
 // Page for getting an analysis by selecting a pre-existing image
 // or taking a new photo. This is using google's image picker
@@ -88,9 +89,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
           icon: Icons.check_circle,
         );
       }
-    
-
   }
+  
   void _showCustomDialog({
     required String message,
     required Color color,
@@ -199,12 +199,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
       case 3:
       // Navigate to Map
         break;
-      //case 4:
-        //Navigator.push(
-          //context,
-          //MaterialPageRoute(builder: (_) => const SettingsPage()),
-        //);
-        //break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsPage()),
+        );
+        break;
     }
     setState(() {
       _currentIndex = index;
