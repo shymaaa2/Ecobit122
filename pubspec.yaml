@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   camera: ^0.11.2
   file_picker: ^10.3.1
   firebase_core: ^4.1.0
@@ -35,6 +37,12 @@ dependencies:
   flutter_screenutil: ^5.9.0   #Screen Responsive
   native_exif: ^0.6.2
   encrypt: ^5.0.1
+  syncfusion_flutter_xlsio: ^31.2.5
+  file_storage: ^1.0.0
+  flutter_localization: ^0.3.3
+  video_player: ^2.6.0
+  intl: any
+  
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +55,7 @@ dev_dependencies:
   mockito: ^5.5.0
 
 flutter:
+  generate: true
   uses-material-design: true
 
   assets:
