@@ -4,7 +4,6 @@ import 'encryption.dart';
 import 'registration.dart';
 import 'home.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -16,17 +15,15 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _loading = false;
+
+  bool isLoading = false;
 
   final Encryption encryption = Encryption();
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-
       final email = _emailController.text.trim();
       final passCheck = _passwordController.text.trim();
-
-
 
       if (email.toLowerCase() == 'admin@gmail.com') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -39,39 +36,36 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       try {
-
-        setState(() => _loading = true);
+        setState(() => isLoading = true);
 
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: passCheck);
 
         if (userCredential.user != null) {
           Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
           );
         }
       } on FirebaseAuthException catch (e) {
         String errorMessage = 'Login failed';
+
         if (e.code == 'user-not-found') {
           errorMessage = 'No user found with this email';
         } else if (e.code == 'wrong-password') {
           errorMessage = 'Incorrect password';
         } else if (e.code == 'invalid-email') {
           errorMessage = 'Invalid email address';
-        } else if (e.code == 'too-many-requests') {
-          errorMessage = 'Too many attempts. Please try again later.';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
           ),
         );
       } finally {
-        setState(() => _loading = false);
+        setState(() => isLoading = false);
       }
     }
   }
@@ -87,14 +81,16 @@ class _LoginPageState extends State<LoginPage> {
               fit: BoxFit.cover,
             ),
           ),
+
           SafeArea(
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Row(
-                    children: [
-                      const Text(
+                    children: const [
+                      Text(
                         'EcoBite',
                         style: TextStyle(
                           fontSize: 22,
@@ -117,21 +113,14 @@ class _LoginPageState extends State<LoginPage> {
                         const Text(
                           'Welcome back!',
                           style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'Please log in to your account',
-                          style: TextStyle(color: Colors.black87, fontSize: 14),
-                        ),
-                        const SizedBox(height: 32),
 
                         TextFormField(
                           controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Email',
                             filled: true,
@@ -140,9 +129,8 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Email is required'
-                              : null,
+                          validator: (v) =>
+                          v!.isEmpty ? 'Email is required' : null,
                         ),
                         const SizedBox(height: 20),
 
@@ -157,36 +145,16 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Password is required'
-                              : null,
+                          validator: (v) =>
+                          v!.isEmpty ? 'Password is required' : null,
                         ),
-                        const SizedBox(height: 10),
 
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              // Forgot Password
-                            },
-                            child: const Text(
-                              'Forgot your password?',
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 30),
 
-                        _loading
-                            ? const CircularProgressIndicator()
-                            : SizedBox(
+                        SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _login,
+                            onPressed: isLoading ? null : _login,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF8DAF85),
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -197,6 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 20),
 
                         Row(
@@ -208,19 +177,19 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const RegisterPage(),
-                                  ),
+                                      builder: (context) =>
+                                      const RegisterPage()),
                                 );
                               },
                               child: const Text(
                                 "Register",
                                 style: TextStyle(
                                   color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
                                   decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ],
@@ -232,6 +201,16 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 6,
+                  color: Colors.green,
+                ),
+              ),
+            ),
         ],
       ),
     );

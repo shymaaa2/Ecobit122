@@ -19,7 +19,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   double q2 = 0;
   double q3 = 0;
   double q4 = 0;
-  String uid = '';
+  String email = '';
 
   Future<void> saveRating() async{
     FeedbackValidators.validateRating({
@@ -28,7 +28,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           'q3': q3,
           'q4': q4,
           'dateTaken': DateTime.now().toIso8601String(),
-          'uid': uid
+          'email': email
     });
 
     await DatabaseService().addRating({
@@ -37,7 +37,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           'q3': q3,
           'q4': q4,
           'dateTaken': DateTime.now().toIso8601String(),
-          'uid': uid
+          'email': email
         });
 
         Navigator.push(
@@ -52,7 +52,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        uid = user.uid;
+        email = user.email ?? "";
       });
     }
   }

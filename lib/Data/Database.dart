@@ -24,14 +24,14 @@ class DatabaseService {
     await db.child('Photos').push().set(photoData);
   }
 
-  // Retrieving scanned fruit using user id
-  static void getPhotos(Function(List<Photo>) photosCallback, String uid) {
+  // Retrieving scanned fruit using email
+  static void getPhotos(Function(List<Photo>) photosCallback, String email) {
     FirebaseDatabase.instance.ref().child("Photos").onValue
         .listen((photoDataSnapshot) {
       if (photoDataSnapshot.snapshot.exists) {
         List<Photo> photos = [];
         for (var element in photoDataSnapshot.snapshot.children) {
-          if(element.child('uid').value == uid){
+          if(element.child('email').value == email){
           PhotoData photoData = PhotoData.fromJson(element.value as Map);
           Photo photo = Photo(key: element.key, photoData: photoData);
           photos.add(photo);
@@ -68,7 +68,7 @@ class DatabaseService {
       );
     }
 
-     // Retrieving photos
+  // Retrieving photos
   static void getUserPhotos(Function(List<Photo>) photosCallback) {
     FirebaseDatabase.instance.ref().child("Photos").onValue
         .listen((photosDataSnapshot) {

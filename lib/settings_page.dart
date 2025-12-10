@@ -1,8 +1,11 @@
+import 'package:eco/streams/general_stream.dart';
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'theme_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:eco/l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'tutorial_video_page.dart';
 
 enum NotificationType { inAppPopup, headsUp }
 
@@ -14,16 +17,17 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  Locale appLocale = const Locale('en');
   int _currentIndex = 4;
 
   NotificationType _notificationType = NotificationType.inAppPopup;
-
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
     _loadNotificationPreference();
+    _loadLanguagePreference();
     _initNotifications();
   }
 
@@ -40,6 +44,33 @@ class _SettingsPageState extends State<SettingsPage> {
     await prefs.setInt('notification_type', type.index);
   }
 
+  Future<void> _loadLanguagePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedLocale = prefs.getString('locale') ?? 'en';
+    setState(() {
+      appLocale = Locale(savedLocale);
+    });
+  }
+
+  Future<void> _saveLanguagePreference(String chosenLang) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', chosenLang);
+  }
+
+
+  Future<void> _toggleLanguage() async {
+    final newLang = appLocale.languageCode == 'en' ? 'ar' : 'en';
+
+    await _saveLanguagePreference(newLang);
+
+    setState(() {
+      appLocale = Locale(newLang);
+    });
+
+
+    GeneralStreams.updateLanguage(Locale(newLang));
+  }
+
   void _initNotifications() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -50,7 +81,6 @@ class _SettingsPageState extends State<SettingsPage> {
       android: androidInitSettings,
       iOS: iosInitSettings,
     );
-
     flutterLocalNotificationsPlugin.initialize(initSettings);
   }
 
@@ -70,7 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
         content: const Text('This is an in-app pop-up notification.'),
         actions: [
           TextButton(
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -103,97 +133,10 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _onTabTapped(int index) {
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
-    }
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  void _showThemeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return AlertDialog(
-          title: const Text('Choose Theme'),
-          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-          titleTextStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<ThemeMode>(
-                title: const Text('Light'),
-                value: ThemeMode.light,
-                groupValue: themeNotifier.value,
-                onChanged: (mode) {
-                  themeNotifier.setTheme(mode!);
-                  Navigator.of(context).pop();
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                title: const Text('Dark'),
-                value: ThemeMode.dark,
-                groupValue: themeNotifier.value,
-                onChanged: (mode) {
-                  themeNotifier.setTheme(mode!);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showNotificationTypeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return AlertDialog(
-          title: const Text('Choose Notification Type'),
-          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-          titleTextStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: NotificationType.values.map((type) {
-              return RadioListTile<NotificationType>(
-                title: Text(
-                  type == NotificationType.inAppPopup
-                      ? 'In-app Pop-ups'
-                      : 'Heads-up Notifications',
-                ),
-                value: type,
-                groupValue: _notificationType,
-                onChanged: (NotificationType? value) {
-                  if (value != null) {
-                    setState(() {
-                      _notificationType = value;
-                    });
-                    _saveNotificationPreference(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
+  void _openTutorial() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const TutorialVideoPage()),
     );
   }
 
@@ -224,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         onPressed: () => Navigator.pop(context),
                       ),
                       Text(
-                        'Settings',
+                        AppLocalizations.of(context)!.settings,
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
@@ -251,29 +194,35 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _buildSettingTile(
-                              Icons.language,
-                              'Language',
-                              isDark,
-                              extraText: 'English  |  Arabic',
+                            TextButton(
+                              child: const Text("تغيير اللغة | Change Language"),
+                              onPressed: _toggleLanguage,
                             ),
                             Divider(color: isDark ? Colors.white30 : Colors.black26),
                             GestureDetector(
-                              onTap: _showThemeDialog,
+                              onTap: () {},
                               child: _buildSettingTile(
                                   Icons.brightness_6, 'Theme', isDark),
                             ),
                             Divider(color: isDark ? Colors.white30 : Colors.black26),
                             GestureDetector(
-                              onTap: _showNotificationTypeDialog,
+                              onTap: () {},
                               child: _buildSettingTile(
-                                  Icons.notifications, 'Notification Type', isDark,
+                                  Icons.notifications,
+                                  AppLocalizations.of(context)!.notifType,
+                                  isDark,
                                   extraText: _notificationType == NotificationType.inAppPopup
-                                      ? 'In-app Pop-ups'
-                                      : 'Heads-up Notifications'),
+                                      ? 'Pop-ups'
+                                      : 'Heads-up'),
                             ),
                             Divider(color: isDark ? Colors.white30 : Colors.black26),
-                            _buildSettingTile(Icons.school, 'Tutorial', isDark),
+                            GestureDetector(
+                              onTap: _openTutorial,
+                              child: _buildSettingTile(
+                                  Icons.school,
+                                  AppLocalizations.of(context)!.tutorial,
+                                  isDark),
+                            ),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: showNotification,
@@ -327,4 +276,3 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
-

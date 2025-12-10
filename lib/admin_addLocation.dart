@@ -16,9 +16,13 @@ class _AdminAddLocationPageState extends State<AdminAddLocationPage> {
   GoogleMapController? _mapController;
   bool _locationPermissionGranted = false;
 
+  final _formKey = GlobalKey<FormState>();
   final _addressController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lngController = TextEditingController();
+
 
   @override
   void initState() {
@@ -43,16 +47,13 @@ class _AdminAddLocationPageState extends State<AdminAddLocationPage> {
   }
 
   Future<void> _saveLocation() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final address = _addressController.text.trim();
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
-
-    if (address.isEmpty || name.isEmpty || phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
-      return;
-    }
 
     final currentUser = FirebaseAuth.instance.currentUser;
     print("Current user email: ${currentUser?.email}");
@@ -72,8 +73,8 @@ class _AdminAddLocationPageState extends State<AdminAddLocationPage> {
         'address': address,
         'name': name,
         'phone': phone,
-        'latitude': _pickedLocation.latitude,
-        'longitude': _pickedLocation.longitude,
+        'latitude': double.parse(_latController.text.trim()),
+        'longitude': double.parse(_lngController.text.trim()),
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -92,7 +93,7 @@ class _AdminAddLocationPageState extends State<AdminAddLocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Map"),
+        title: const Text("Add Location"),
         backgroundColor: Colors.green,
       ),
       body: _locationPermissionGranted
@@ -128,39 +129,97 @@ class _AdminAddLocationPageState extends State<AdminAddLocationPage> {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _addressController,
-                    decoration: const InputDecoration(
-                      labelText: "Enter Address",
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Address",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter an address';
+                        }
+                        if (!RegExp(r'^[a-zA-Z0-9\s,.-]+$').hasMatch(value)) {
+                          return 'Address can only contain letters, numbers, spaces, commas and dots';
+                        }
+                        if (value.trim().length < 5) {
+                          return 'Address must be at least 5 characters long';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: "Enter Name",
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Name",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a name';
+                        }
+                        if (!RegExp(r"^[a-zA-Z\s]+$").hasMatch(value)) {
+                          return 'Name should contain only letters';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: "Enter Phone Number",
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Phone Number",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a phone number';
+                        }
+                        if (!RegExp(r'^[0-9]{8,15}$').hasMatch(value)) {
+                          return 'Phone number must be 8–15 digits';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _saveLocation,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+
+                    TextFormField(
+                      controller: _latController,
+                      decoration: const InputDecoration(labelText: "Latitude"),
+                      validator :(value){
+                        if (value == null || value.trim().isEmpty) return "Enter latitude";
+                           double? lat = double.tryParse(value);
+                        if (lat == null) return "Latitude must be a number";
+                        if (lat < -90 || lat > 90) return "Latitude must be between -90 and 90";
+                        return null;
+                        }
                     ),
-                    child: const Text("Submit"),
-                  ),
-                ],
+
+                    TextFormField(
+                      controller: _lngController,
+                      decoration: const InputDecoration(labelText: "Longitude"),
+                      validator: (value){
+                      if (value == null || value.trim().isEmpty) return "Enter longitude";
+                         double? lng = double.tryParse(value);
+                      if (lng == null) return "Longitude must be a number";
+                      if (lng < -180 || lng > 180) return "Longitude must be between -180 and 180";
+                      return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _saveLocation,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      child: const Text("Submit"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

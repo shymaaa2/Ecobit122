@@ -9,6 +9,8 @@ import 'home.dart';
 import 'feedback.dart';
 import 'package:native_exif/native_exif.dart';
 import 'settings_page.dart';
+import 'Data/Database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Page for getting an analysis by selecting a pre-existing image
 // or taking a new photo. This is using google's image picker
@@ -41,12 +43,34 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   List<Widget>? _widgets;
 
+  String? email = "";
+
   initPages() async {
     if (cameraIsAvailable) {
       // get list of available cameras
       cameraDescription = (await availableCameras()).first;
       _widgets?.add(CameraScreen(camera: cameraDescription));
     }
+  }
+
+
+   Future<void> _loadUserData() async{
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        email = user.email;
+      });
+    }
+  }
+
+  Future<void> savePhoto() async{
+
+     await DatabaseService().addPhoto({
+          'email': email,
+          'img': imagePath,
+          'status':  result,
+          'dateTaken': DateTime.now().toIso8601String(),
+        });
   }
 
   calculateHours(DateTime imgDate) {
@@ -57,20 +81,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   // Preparing the image to be analyzed by turning it into bytes
   // and then into UintList8 I think, basically think of the matrices from math
-  // I think...
   Future<void> processImage() async {
 
       exif = await Exif.fromPath(imagePath ?? '');
       shootingDate = await exif?.getOriginalDate();
       int age = calculateHours(shootingDate ?? DateTime.now().subtract(const Duration(days: -1)));
-      print(age);
+
       if(age >= 1) {
         // Check if Image was taken over 24 hours ago
-        // maybe remove this check??
-        setState(() {
-          errMsg = 'Select an image that was taken less than 24 hours ago';
-        });
-        print(errMsg);
 
         _showCustomDialog(
           message: 'This image was taken more than 24 hours ago!',
@@ -79,6 +97,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         );
       }
       else{
+      
         final imageBytes = File(imagePath!).readAsBytesSync();
         image = img.decodeImage(imageBytes);
         imageAnalysis();
@@ -167,8 +186,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   // Making everything empty for the next analysis
-  // Didn't think it's necessary in other pages but
-  // We might need it for the camera
   void cleanResult(){
     imagePath = null;
     image = null;
@@ -215,16 +232,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
   void initState() {
     super.initState();
     classifier.initModel();
+    _loadUserData();
     initPages();
+    cleanResult();
   }
 
-  @override
-  void dispose() {
-    classifier.close();
-    super.dispose();
-  }
+  
 
-  // Same thing with the other UI I just copied this stuff for testing
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -287,7 +301,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (imagePath != null) Image.file(File(imagePath!)),
+                  if (imagePath != null) 
+                  Row(
+                    children: [Image.file(File(imagePath!))]
+                    ),
                   if (image == null)
                     const Text("Take a photo or choose one from the gallery to "
                         "inference."),
@@ -302,15 +319,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             children: [
                             if (classification != null)
                               Container(
-                              padding: const EdgeInsets.all(8),
-                              color: Colors.white,
-                              child: Row(
-                              children: [
-                              Text("Detected: $result",
-                              style:
-                              TextStyle(
-                              color: Colors.black
-                              ),),
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.white,
+                                child: Row(
+                                children: [
+                                Text("Detected: $result",
+                                style:
+                                TextStyle(
+                                color: Colors.black
+                                ),),
                               const Spacer(),
                                 IconButton(
                                   icon: const Icon(
@@ -407,11 +424,20 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                       ),
                                     );
                                   },
-                                )
-                              ],
+                                ),
+                               ElevatedButton(onPressed: ()=> savePhoto(), 
+                                child: Text('Save',
+                                style: TextStyle(
+                                color: Colors.green)),
+                              ),
+                                ElevatedButton(onPressed: ()=> cleanResult(), 
+                                child: Text('discard',
+                                style: TextStyle(
+                                color: Colors.green)),
+                              ),
+                            ],
                             ),
-                          )
-                          
+                          ),
                       ])
                 )],
               )
@@ -447,5 +473,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
           )
       ),  
     );
+  }
+
+  @override
+  void dispose() {
+    classifier.close();
+    super.dispose();
   }
 }

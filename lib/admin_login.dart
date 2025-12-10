@@ -16,7 +16,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final String adminEmail = 'admin@gmail.com';
-  bool _loading = false;
+  bool isLoading = false;
+
 
   Future<void> _loginAdmin() async {
     if (_formKey.currentState!.validate()) {
@@ -31,7 +32,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       }
 
       try {
-        setState(() => _loading = true);
+        setState(() => isLoading = true);
+
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password);
 
@@ -55,7 +57,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           SnackBar(content: Text(errorMessage)),
         );
       } finally {
-        setState(() => _loading = false);
+        setState(() => isLoading = false);
       }
     }
   }
@@ -143,12 +145,12 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _loading ? null : _loginAdmin,
+                            onPressed: isLoading ? null : _loginAdmin,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF8DAF85), // match login page
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            child: _loading
+                            child: isLoading
                                 ? const CircularProgressIndicator(color: Colors.white)
                                 : const Text(
                               'Sign In',
@@ -189,6 +191,16 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
               ),
             ),
           ),
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 6,
+                  color: Colors.green,
+                ),
+              ),
+            ),
         ],
       ),
     );

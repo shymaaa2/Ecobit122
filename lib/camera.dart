@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'classifier.dart';
 import 'image_utils.dart';
 
-// Page for getting an analysis by snapping one image
-// It is different from the live camera, see live camera
+//live camera
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({
@@ -41,13 +39,15 @@ class CameraScreenState extends State<CameraScreen> {
   // Resolution preset affects the quality of the camera so if
   // you try the camera asnd everythings looks bad that's why
   Future<void> initCamera() async{
-    cameraController = CameraController(widget.camera, ResolutionPreset.medium,
-        imageFormatGroup: Platform.isIOS ?
-        ImageFormatGroup.bgra8888 :
-        ImageFormatGroup.yuv420);
+    cameraController = CameraController(widget.camera, ResolutionPreset.medium);
 
-    cameraController.initialize().then((value) {
-      cameraController.startImageStream(imageAnalysis);
+    await cameraController.initialize().then((value) {
+      cameraController.startImageStream((image)
+      {
+        if(DateTime.now().difference(lastShot).inSeconds > 1){
+          imageAnalysis(image);
+        }
+      });
       if (mounted) {
         setState(() {});
       }
@@ -79,17 +79,16 @@ class CameraScreenState extends State<CameraScreen> {
     final convertedImage = ImageUtils.convertCameraImage(cameraImage);
     classification = await classifier.runInference(convertedImage!);
 
-    setState(() {});
     // Processing the result into a string so we can display in the ui
     final classifResult = classifier.postProcess(classification!);
 
     setState(() {
       result = classifResult;
+      _isProcessing = false;
+      lastShot = DateTime.now();
     });
-    _isProcessing = false;
-    if (mounted) {
-      setState(() {});
-    }
+    
+  
   }
 
   @override
@@ -98,90 +97,40 @@ class CameraScreenState extends State<CameraScreen> {
     initCamera();
     classifier.initModel();
   }
-
-  @override
-  void dispose() {
-    cameraController.dispose();
-    classifier.close();
-    super.dispose();
-  }
-
-  Widget cameraWidget(context) {
-    // This was also copied. Just some scaling code.
-    // I didn't write it's comments
-    var camera = cameraController.value;
-    // fetch screen size
-    final size = MediaQuery.of(context).size;
-
-    // calculate scale depending on screen and camera ratios
-    // this is actually size.aspectRatio / (1 / camera.aspectRatio)
-    // because camera preview size is received as landscape
-    // but we're calculating for portrait orientation
-    var scale = size.aspectRatio * camera.aspectRatio;
-
-    // to prevent scaling down, invert the value
-    if (scale < 1) scale = 1 / scale;
-
-    return Transform.scale(
-      scale: scale,
-      child: Center(
-        child: CameraPreview(cameraController),
-      ),
-    );
-  }
-
   // I copied the UI becuase I just wanted to display the results
   // so we will have to get it changed. This applies to all the pages I worked on
   @override
   Widget build(BuildContext context) {
-    // Size size = MediaQuery.of(context).size;
-    List<Widget> list = [];
 
-    list.add(
-      SizedBox(
-        // This checks if the camera is has been activated
-        height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-        // This checks if the camera is has been activated
-        child: (!cameraController.value.isInitialized)
-            ? Column(
-          children: [
-            const Center(child: CircularProgressIndicator())
-          ],
-          )
-            : cameraWidget(context),
+    return Scaffold(
+      appBar: AppBar(
       ),
+      body: (cameraController.value.isInitialized)
+          ? Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width,
+                  child: CameraPreview(cameraController),
+                ),
+                if (classification != null)
+                Text(
+                  "Detected: $result",
+                  style: const TextStyle(
+                    fontSize: 28,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            )
+          : const Center(child: CircularProgressIndicator()),
     );
-    list.add(
-        Align(
-      alignment: Alignment.bottomCenter,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // If the classifier returns a result then display
-            if (classification != null)
-          Container(
-          padding: const EdgeInsets.all(20),
-          color: Colors.white,
-          child: Row(
-          children: [
-          Text("Detected: $result",
-            style:
-            TextStyle(
-              fontSize: 18,
-                color: Colors.black
-            ),),
-          const Spacer(),
-          ],
-        ),
-      ),
-    ])
-    )
-    ));
-    return SafeArea(
-      child: Stack(
-        children: list,
-      ),
-    );
+ }
+
+   @override
+  void dispose() {
+    cameraController.dispose();
+    classifier.close();
+    super.dispose();
   }
 }

@@ -1,8 +1,13 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:eco/l10n/app_localizations.dart';
+import 'package:eco/l10n/app_localizations_ar.dart';
+import 'package:eco/streams/general_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 // App pages
 import 'settings_page.dart';
@@ -18,6 +23,7 @@ import 'themed_background.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
   runApp(const EcoBiteApp());
 }
 
@@ -26,7 +32,10 @@ class EcoBiteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
+    return StreamBuilder<Locale>(
+      stream: GeneralStreams.languageStream,
+      builder: (context, snapshot) {
+      return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentMode, _) {
         return ScreenUtilInit(
@@ -35,6 +44,9 @@ class EcoBiteApp extends StatelessWidget {
           splitScreenMode: true,
           builder: (context, child) {
             return MaterialApp(
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates:  AppLocalizations.localizationsDelegates,
+              locale: Locale('en'),
               debugShowCheckedModeBanner: false,
               title: 'EcoBite',
               theme: ThemeData(
@@ -52,6 +64,7 @@ class EcoBiteApp extends StatelessWidget {
         );
       },
     );
+    });
   }
 }
 
@@ -60,23 +73,22 @@ class BottomNavigationBarExample extends StatefulWidget {
   const BottomNavigationBarExample({super.key});
 
   @override
-  State<BottomNavigationBarExample> createState() =>
-      _BottomNavigationBarExampleState();
+  State<BottomNavigationBarExample> createState() =>_BottomNavigationBarExampleState();
 }
 
-class _BottomNavigationBarExampleState
-    extends State<BottomNavigationBarExample> {
+class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample> {
+
   late CameraDescription cameraDescription;
   int _selectedIndex = 0;
   List<Widget>? _widgetOptions;
   bool cameraIsAvailable = Platform.isAndroid;
 
   @override
-  void initState() {
-    super.initState();
+    void initState(){
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initPages();
     });
+    super.initState();
   }
 
   Future<void> initPages() async {
@@ -101,7 +113,7 @@ class _BottomNavigationBarExampleState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EcoBite'),
+        title: Text('EcoBite'),
         actions: [
           IconButton(
             key: const Key('theme_toggle_button'),
@@ -136,22 +148,22 @@ class _BottomNavigationBarExampleState
             TextStyle(fontWeight: FontWeight.normal, fontSize: 11.sp),
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            items: const [
+            items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home, key: Key('take_shot_tab')),
-                label: 'Home',
+                label: AppLocalizations.of(context)!.home,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.photo, key: Key('gallery_tab_icon')),
-                label: 'Gallery',
+                label: AppLocalizations.of(context)!.gallery,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.map, key: Key('map_tab_icon')),
-                label: 'Map',
+                label: AppLocalizations.of(context)!.map,
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.settings, key: Key('settings_tab_icon')),
-                label: 'Settings',
+                label: AppLocalizations.of(context)!.settings,
               ),
             ],
             currentIndex: _selectedIndex,

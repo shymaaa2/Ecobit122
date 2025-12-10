@@ -1,8 +1,10 @@
+import 'package:eco/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'login.dart';
 import 'registration.dart';
 import 'admin_login.dart';
+
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -19,7 +21,7 @@ class WelcomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       body: Stack(
-        children: [
+        children: <Widget>[
           // Background Image
           Positioned.fill(
             child: Image.asset(
@@ -53,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'EcoBite',
                         style: TextStyle(
                           fontSize: 24,
@@ -92,8 +94,8 @@ class WelcomePage extends StatelessWidget {
                 const Spacer(),
 
                 // Welcome Text
-                const Text(
-                  'Welcome!',
+                Text(
+                  AppLocalizations.of(context)!.welcome,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -102,7 +104,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Do you want to check\nif the fruit is edible?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -136,7 +138,7 @@ class WelcomePage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             elevation: 3,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Register',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
@@ -160,7 +162,7 @@ class WelcomePage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             backgroundColor: Colors.white.withOpacity(0.9),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Login',
                             style: TextStyle(color: Colors.green, fontSize: 16),
                           ),

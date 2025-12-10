@@ -6,6 +6,7 @@ import 'Data/photo.dart';
 import 'themed_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'settings_page.dart';
+import 'customPageRoute.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,31 +28,31 @@ class _HomePageState extends State<HomePage> {
       case 0:
        Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
+         CustomPageRoute(child :HomePage()),
         );
         break;
       case 1:
        Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
+         CustomPageRoute(child: const HomePage()),
         );
         break;
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const GalleryScreen()),
+          CustomPageRoute(child: GalleryScreen()),
         );
         break;
       case 3:
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const MapPickerPage()),
+        CustomPageRoute(child: MapPickerPage()),
         );
         break;
       case 4:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const SettingsPage()),
+          CustomPageRoute(child: const SettingsPage()),
         );
         break;
     }
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
         this.photoList = photoList;
       }
     );
-    }, uid
+    }, email
   );
   }
 
@@ -172,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(color: isDark ? Colors.white : Colors.black),
                       ),
                       subtitle: Text(
-                        "Status: ${photo.photoData!.status}",
+                        "Status: ${photo.photoData!.status!}",
                         style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                       ),
                       trailing: Row(
